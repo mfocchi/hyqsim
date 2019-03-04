@@ -17,28 +17,31 @@ footW = mapPosToWorld(footB);
 footVelW = mapVelToWorld(footVelB); %mapping for velocity is only a rotation
 
 %zero crossing
-if ((footW(3) - groundLevel)< THREESHOLD)    
+if (~eval(strcat('inContact.',leg)) && (footW(3) - groundLevel)< THREESHOLD)    
+    %sample the foot position at touchdown
     sampleTouchDownLeg= footW;
+    eval(strcat('sampleTouchDown.',leg,'= sampleTouchDownLeg;'));
+    assignin('base', 'sampleTouchDown', sampleTouchDown);  
     eval(strcat('inContact.',leg,'= true;'));
 end
-if ((footW(3) - groundLevel)> THREESHOLD)    
+if (eval(strcat('inContact.',leg)) && (footW(3) - groundLevel)> THREESHOLD)    
     eval(strcat('inContact.',leg,'= false;'));
 end
 
 %compute grf
-if ( eval(strcat('inContact.',leg)))    
-%     footW
-%     footVelW
-%     sampleTouchDownLeg
+if ( eval(strcat('inContact.',leg)))      
+    sampleTouchDownLeg = eval(strcat('sampleTouchDown.',leg));
     grForcesLegW = stiffness*(sampleTouchDownLeg - footW) - damping*footVelW;
 else 
     grForcesLegW= [0;0;0];
 end
 
+%to test the dinamics is correct just make grfs that compensate gravity
+%ip = evalin('base','ip');
+%grForcesLegW =[0;0; 9.81*ip.totalMass/4];
 
-eval(strcat('sampleTouchDown.',leg,'= sampleTouchDownLeg;'));
 assignin('base', 'inContact', inContact);
-assignin('base', 'sampleTouchDown', sampleTouchDown);         
+       
 
 
 
