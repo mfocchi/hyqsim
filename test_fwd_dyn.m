@@ -33,8 +33,6 @@
     sampleTouchDown.RF = zeros(3,1);
     sampleTouchDown.LH = zeros(3,1);
     sampleTouchDown.RH = zeros(3,1);
-    logBasePoseW=zeros(6,1);
-    time = 0;
 
     if (USE_LOGGED_DATA)
         load('data/slow_crawl.mat')
@@ -65,18 +63,17 @@
             
     %terrain info
     groundLevel = 0.0;
-    stiffness = 8000000;
-    damping = 100;
-    
+    stiffness = 80000;
+    damping = 100;    
     %joint controller info
-    K = 1000;
-    D = 10;
+    K = 500;
+    D = 30;
     
     plot_plane_through_point([0;0;1],[0;0;groundLevel],1);
     hold on
     for i=initIndex:endIndex
-        time(:,i) = dt*i;
-        disp(strcat( 'time  : ',num2str(dt*i)))        
+ 
+        %disp(strcat( 'time  : ',num2str(dt*i)))        
         
         %this is just for debug the graphics with logged data
         if (USE_LOGGED_DATA) 
@@ -92,16 +89,18 @@
         if (~USE_LOGGED_DATA)
             %compute controller to set tau
             tau = K*(q_des-q) - D*(qd);
+            %to keep the gravity
+              %%26.579       3.6049       46.717       25.192        3.807       49.516       25.449      -7.3699      -51.225       24.925      -7.2325      -51.328
             %compute contact model for legs to set grForces
-            grForcesBLeg = computeContactModel('LF', feet, feetVel); 
+            grForcesBLeg = computeContactModel('LF', feet, feetVel);
             setLegData('LF', b_R_w*grForcesBLeg,  'grForcesB');
             grForcesBLeg = computeContactModel('RF', feet, feetVel); 
             setLegData('RF', b_R_w*grForcesBLeg,  'grForcesB');
             grForcesBLeg = computeContactModel('LH', feet, feetVel); 
             setLegData('LH', b_R_w*grForcesBLeg,  'grForcesB');
-            grForcesBLeg = computeContactModel('RH', feet, feetVel); 
-            setLegData('RH', b_R_w*grForcesBLeg,  'grForcesB');
-          
+            grForcesBLeg = computeContactModel('RH', feet, feetVel);
+            setLegData('RH', b_R_w*grForcesBLeg,  'grForcesB');         
+            
             %debug
 %             fprintf( 'inContact  %i %i %i %i \n', inContact.LF, inContact.RF,inContact.LH,inContact.RH)
 %             fprintf('sampleTouchDown.LF  %f %f %f  \n', sampleTouchDown.LF(1), sampleTouchDown.LF(2),sampleTouchDown.LF(3))
@@ -126,11 +125,16 @@
         
         %Jb = computeJcb(stance_legs, feet);     
         plotRobot
+        %logs
+        time(:,i) = dt*i;
         logBasePoseW(:,i) =  basePoseW;
         logBaseAccB(:,i) =  baseAccB;       
-
+        logTau(:,i) = tau;
     end
-    figure    
-    plot(time, logBasePoseW(6,:))
-    figure    
-    plot(time, logBaseAccB(6,:))
+    
+%     figure    
+%     plot(time, logBasePoseW(6,:))
+%     figure    
+%     plot(time, logBaseAccB(6,:))
+%     figure    
+%     plot(time, logTau(1,:))

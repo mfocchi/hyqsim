@@ -54,7 +54,7 @@ h5=plot3( kfe_origW(1),kfe_origW(2),kfe_origW(3),'ro');
 
 %PLOT THE CONTACT FORCE
 grForceLegB= getLegData(leg, grForcesB);
-h6 = arrow3d_points(foot_origW, foot_origW+ b_R_w'*grForceLegB/500,'color',[1 0 0]);grid on;
+h6 = arrow3d_points(foot_origW, foot_origW+ b_R_w'*grForceLegB/1000,'color',[1 0 0]);grid on;
 
 assignin('base', 'h1', h1)
 assignin('base', 'h2', h2) 
