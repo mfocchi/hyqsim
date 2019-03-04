@@ -1,4 +1,4 @@
-function [qdd trunk_a] = forwardDynamics(trunk_v, gravity, qd, tau, grForcesB)
+function [qdd trunk_a] = forwardDynamics(trunk_v, gravity, qd, tau, grForcesB, fixedbase)
 
 utility = evalin('base', 'utility');
 
@@ -86,9 +86,11 @@ grf_wrench(4:6,1) =  utility.getRotation(ht.RH_foot_Xh_fr_trunk)*getLegData('RH'
 fext{13} = ft.fr_RH_lowerleg_XF_RH_foot*grf_wrench;
 
 %debug should be static
-% Ic_trunk = evalin('base', 'Ic_trunk');
-% fext{1} = -Ic_trunk*gravity;
-
+if (fixedbase)
+ Ic_trunk = evalin('base', 'Ic_trunk');
+ fext{1} = -Ic_trunk*gravity;
+end
+ 
 qdd = zeros(12,1);
 trunk_AI = ip.lf_trunk.tensor6D;
 LF_hipassembly_AI = ip.lf_LF_hipassembly.tensor6D;

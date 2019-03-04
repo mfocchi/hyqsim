@@ -16,8 +16,9 @@
     initMotionTransforms();
     initJacobians();
     utility=utils;
-
-    USE_LOGGED_DATA = false
+    
+    simParams
+        
 
     %old
     %q = [ -0.1  0.7 -1.4   -0.2  0.75 -1.5  -0.2  -0.75 1.5  -0.2  -0.75 1.5];
@@ -35,7 +36,7 @@
     sampleTouchDown.RH = zeros(3,1);
 
     if (USE_LOGGED_DATA)
-        load('data/slow_crawl.mat')
+        load(mat_file)
         dt = time(2) - time(1); %not too smal otherwise it gets unstable   
         time = time - time(1);
         initTime = 5; %%start from 5 seconds otherwise you need to wait a lot!
@@ -53,21 +54,13 @@
         q_des = [ -0.2;  0.7; -1.4;   -0.2;  0.75 ;-1.5  ;-0.2  ;-0.75 ;1.5  ;-0.2  ;-0.75 ;1.5];
         qd_des  = zeros(12,1);
         q = q_des;
-        qd = qd_des;
-        
-        dt = 0.001;
+        qd = qd_des;  
+
         initIndex = 1;
-        endIndex = 0.15/dt;       
+        endIndex = simulationDuration/dt;       
         grForcesB = zeros(12,1);
     end
             
-    %terrain info
-    groundLevel = 0.0;
-    stiffness = 80000;
-    damping = 100;    
-    %joint controller info
-    K = 500;
-    D = 30;
     
     plot_plane_through_point([0;0;1],[0;0;groundLevel],1);
     hold on
@@ -113,7 +106,7 @@
   
         %compute dynamics        
         gravityWrenchB = [ zeros(3,1);b_R_w*[0;0;-9.81]];
-        [qdd baseAccB] = forwardDynamics(baseTwistB, gravityWrenchB, qd, tau, grForcesB);  
+        [qdd baseAccB] = forwardDynamics(baseTwistB, gravityWrenchB, qd, tau, grForcesB, FREEZE_BASE);  
 
         %integrate fwd everything ok with acc
         baseTwistB = baseTwistB + dt*baseAccB;
