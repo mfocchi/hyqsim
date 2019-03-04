@@ -1,5 +1,5 @@
 function [qdd trunk_a] = forwardDynamics(trunk_v, gravity, qd, tau, grForcesB)
-tau'
+
 utility = evalin('base', 'utility');
 
 ht = evalin('base', 'ht');
@@ -28,6 +28,7 @@ fext{11} = zeros(6,1);
 fext{12} = zeros(6,1);
 fext{13} = zeros(6,1);
 
+%alternative way
 %lowerleg LF
 %compute wrench at trunk frame due to grforces
 % grf_wrench(1:3,1) =  cross_mx(utility.getPosition( ht.LF_foot_Xh_fr_trunk)) * getLegData('LF',grForcesB);
@@ -56,9 +57,8 @@ fext{13} = zeros(6,1);
 % %apply shifting law to get the wrench in the lowerleg frame
 % fext{13} = ft.fr_RH_lowerleg_XF_fr_trunk*grf_wrench;
 
-
+%way suggested by Marco Frigerio
 %lowerleg LF
-
 %express contact wrench in foot frame
 grf_wrench(1:3,1) =  zeros(3,1); %no moment at the foot
 grf_wrench(4:6,1) =  utility.getRotation(ht.LF_foot_Xh_fr_trunk)*getLegData('LF',grForcesB); %rotate force in foot frame
@@ -133,7 +133,6 @@ else
     RH_lowerleg_p = zeros(6,1);
 end
 
-RF_lowerleg_p
 
 %celldisp(fext) 
 %% ---------------------- FIRST PASS ----------------------

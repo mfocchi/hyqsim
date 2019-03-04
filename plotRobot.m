@@ -6,7 +6,7 @@
 [h(6), h(7) h(8)  h(9) h(10) h(22)] =plotLegs('RF');
 [h(11), h(12) h(13)  h(14) h(15) h(23)] =plotLegs('LH');
 [h(16), h(17) h(18)  h(19) h(20) h(24)]  =plotLegs('RH') ;
-%axis equal
+axis equal
 
 
 %subplot(2,1,2)

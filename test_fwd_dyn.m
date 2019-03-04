@@ -2,6 +2,7 @@
     clc
        
     addpath('hyq')
+    addpath('rotations')
     loadFigOptions
     close all
     figure 
@@ -32,7 +33,8 @@
     sampleTouchDown.RF = zeros(3,1);
     sampleTouchDown.LH = zeros(3,1);
     sampleTouchDown.RH = zeros(3,1);
-    
+    logBasePoseW=zeros(6,1);
+    time = 0;
 
     if (USE_LOGGED_DATA)
         load('data/slow_crawl.mat')
@@ -47,7 +49,6 @@
         q =[LF_HAA_th(initIndex);LF_HFE_th(initIndex); LF_KFE_th(initIndex);  RF_HAA_th(initIndex);RF_HFE_th(initIndex);    RF_KFE_th(initIndex); LH_HAA_th(initIndex);LH_HFE_th(initIndex);LH_KFE_th(initIndex); RH_HAA_th(initIndex);RH_HFE_th(initIndex);RH_KFE_th(initIndex)];
         qd =[LF_HAA_thd(initIndex);LF_HFE_thd(initIndex); LF_KFE_thd(initIndex);  RF_HAA_thd(initIndex);RF_HFE_thd(initIndex);    RF_KFE_thd(initIndex); LH_HAA_thd(initIndex);LH_HFE_thd(initIndex);LH_KFE_thd(initIndex); RH_HAA_thd(initIndex);RH_HFE_thd(initIndex);RH_KFE_thd(initIndex)];
        
-
     else 
         basePoseW = [0;0;0;0;0;0.6];
         baseTwistB = zeros(6,1);
@@ -58,13 +59,13 @@
         
         dt = 0.001;
         initIndex = 1;
-        endIndex = 10/dt;       
+        endIndex = 0.15/dt;       
         grForcesB = zeros(12,1);
     end
             
     %terrain info
     groundLevel = 0.0;
-    stiffness = 80000000;
+    stiffness = 8000000;
     damping = 100;
     
     %joint controller info
@@ -74,7 +75,8 @@
     plot_plane_through_point([0;0;1],[0;0;groundLevel],1);
     hold on
     for i=initIndex:endIndex
-        disp(strcat( 'time',num2str(dt*i)))        
+        time(:,i) = dt*i;
+        disp(strcat( 'time  : ',num2str(dt*i)))        
         
         %this is just for debug the graphics with logged data
         if (USE_LOGGED_DATA) 
@@ -91,11 +93,15 @@
             %compute controller to set tau
             tau = K*(q_des-q) - D*(qd);
             %compute contact model for legs to set grForces
-            grForcesBLeg = computeContactModel('LF', feet, feetVel); setLegData('LF', b_R_w*grForcesBLeg,  'grForcesB');
-            grForcesBLeg = computeContactModel('RF', feet, feetVel); setLegData('RF', b_R_w*grForcesBLeg,  'grForcesB');
-            grForcesBLeg = computeContactModel('LH', feet, feetVel); setLegData('LH', b_R_w*grForcesBLeg,  'grForcesB');
-            grForcesBLeg = computeContactModel('RH', feet, feetVel); setLegData('RH', b_R_w*grForcesBLeg,  'grForcesB');
-            
+            grForcesBLeg = computeContactModel('LF', feet, feetVel); 
+            setLegData('LF', b_R_w*grForcesBLeg,  'grForcesB');
+            grForcesBLeg = computeContactModel('RF', feet, feetVel); 
+            setLegData('RF', b_R_w*grForcesBLeg,  'grForcesB');
+            grForcesBLeg = computeContactModel('LH', feet, feetVel); 
+            setLegData('LH', b_R_w*grForcesBLeg,  'grForcesB');
+            grForcesBLeg = computeContactModel('RH', feet, feetVel); 
+            setLegData('RH', b_R_w*grForcesBLeg,  'grForcesB');
+          
             %debug
 %             fprintf( 'inContact  %i %i %i %i \n', inContact.LF, inContact.RF,inContact.LH,inContact.RH)
 %             fprintf('sampleTouchDown.LF  %f %f %f  \n', sampleTouchDown.LF(1), sampleTouchDown.LF(2),sampleTouchDown.LF(3))
@@ -108,10 +114,10 @@
   
         %compute dynamics        
         gravityWrenchB = [ zeros(3,1);b_R_w*[0;0;-9.81]];
-        [qdd baseAcc] = forwardDynamics(baseTwistB, gravityWrenchB, qd, tau, grForcesB);  
-       
+        [qdd baseAccB] = forwardDynamics(baseTwistB, gravityWrenchB, qd, tau, grForcesB);  
+
         %integrate fwd everything ok with acc
-        baseTwistB = baseTwistB + dt*baseAcc;
+        baseTwistB = baseTwistB + dt*baseAccB;
         qd = qd + dt*qdd;        
         %treat differently linvel and omega
         basePoseW(1:3,1) = basePoseW(1:3,1) + dt*mapOmegaToRPYDer*baseTwistB(1:3,1); %ang
@@ -120,6 +126,11 @@
         
         %Jb = computeJcb(stance_legs, feet);     
         plotRobot
-
+        logBasePoseW(:,i) =  basePoseW;
+        logBaseAccB(:,i) =  baseAccB;       
 
     end
+    figure    
+    plot(time, logBasePoseW(6,:))
+    figure    
+    plot(time, logBaseAccB(6,:))

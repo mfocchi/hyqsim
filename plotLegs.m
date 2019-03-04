@@ -52,8 +52,9 @@ h3=plot3( haa_origW(1),haa_origW(2),haa_origW(3),'ro');
 h4=plot3( hfe_origW(1),hfe_origW(2),hfe_origW(3),'ro');
 h5=plot3( kfe_origW(1),kfe_origW(2),kfe_origW(3),'ro');
 
-grForceLeg= getLegData(leg, grForcesB);
-h6 = arrow3d_points(foot_origW, foot_origW+ b_R_w'*grForceLeg/500,'color',[1 0 0]);grid on;
+%PLOT THE CONTACT FORCE
+grForceLegB= getLegData(leg, grForcesB);
+h6 = arrow3d_points(foot_origW, foot_origW+ b_R_w'*grForceLegB/500,'color',[1 0 0]);grid on;
 
 assignin('base', 'h1', h1)
 assignin('base', 'h2', h2) 
