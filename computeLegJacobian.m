@@ -1,6 +1,6 @@
 
 % The feet-Jacobian of the Constraints.
-function J = computeJacobian(leg, jq)
+function J = computeLegJacobian(leg, jq)
 
 
 J = zeros(3,  12);
@@ -19,6 +19,8 @@ end
 
 if strcmp(leg, 'RH') 
     J(1:3,10:12) = jq;
+    
+
 end
 
 end

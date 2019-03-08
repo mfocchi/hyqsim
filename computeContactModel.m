@@ -10,21 +10,22 @@ sampleTouchDown = evalin('base','sampleTouchDown');
 sampleTouchDownLeg = zeros(3,1);
 
 %detect zero crossing
-THREESHOLD = -1e-3;
+THRESHOLD = -1e-3;
 footB = eval(strcat('feet.',leg));
 footVelB = eval(strcat('feetVel.',leg));
 footW = mapPosToWorld(footB);
+
 footVelW = mapVelToWorld(footVelB); %mapping for velocity is only a rotation
 
 %zero crossing
-if (~eval(strcat('inContact.',leg)) && (footW(3) - groundLevel)< THREESHOLD)    
+if (~eval(strcat('inContact.',leg)) && (footW(3) - groundLevel)<= THRESHOLD)    
     %sample the foot position at touchdown
     sampleTouchDownLeg= footW;
     eval(strcat('sampleTouchDown.',leg,'= sampleTouchDownLeg;'));
     assignin('base', 'sampleTouchDown', sampleTouchDown);  
     eval(strcat('inContact.',leg,'= true;'));
 end
-if (eval(strcat('inContact.',leg)) && (footW(3) - groundLevel)> THREESHOLD)    
+if (eval(strcat('inContact.',leg)) && (footW(3) - groundLevel)>= THRESHOLD)    
     eval(strcat('inContact.',leg,'= false;'));
 end
 
