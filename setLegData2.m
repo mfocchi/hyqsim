@@ -1,6 +1,4 @@
-function setLegData(leg, input, jointstate_name) 
-
-jointstate = evalin('base', jointstate_name);
+function output = setLegData2(leg, input, jointstate) 
 
 if strcmp(leg, 'LF') 
 
@@ -23,6 +21,6 @@ if strcmp(leg, 'RH')
    jointstate(10:12) = input;
 end
 
-assignin('base', jointstate_name, jointstate)
-end
+output = jointstate;
 
+end
