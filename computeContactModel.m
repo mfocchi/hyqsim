@@ -6,6 +6,7 @@ stiffness =evalin('base','stiffness');
 damping =evalin('base','damping');
 inContact =evalin('base','inContact');
 sampleTouchDown = evalin('base','sampleTouchDown');
+THRESHOLD = evalin('base','THRESHOLD');
 
 sampleTouchDownLeg = zeros(3,1);
 

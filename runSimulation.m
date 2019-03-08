@@ -84,8 +84,8 @@
      
     
         %compute dynamics        
-        gravityWrenchB = [ zeros(3,1);b_R_w*[0;0;-9.81]];
-        [qdd, baseAccB] = forwardDynamics(baseTwistB, gravityWrenchB, qd, tau, grForcesB, FREEZE_BASE);  
+        gravityB = [ zeros(3,1);b_R_w*[0;0;-9.81]];
+        [qdd, baseAccB] = forwardDynamics(baseTwistB, gravityB, qd, tau, grForcesB, FREEZE_BASE);  
 
  
 
