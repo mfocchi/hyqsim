@@ -31,3 +31,5 @@
     tau= zeros(12,1);
     grForcesB= zeros(12,1);
 
+    initIndex = 1;
+    endIndex = simulationDuration/dt;   
