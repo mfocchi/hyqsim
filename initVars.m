@@ -21,7 +21,7 @@
     sampleTouchDown.RH = zeros(3,1);
     
     %%init state variables
-    basePoseW = [0;0;0;0;0;0.6];
+    basePoseW = [0;0;0;0;0;0.65];
     baseTwistB = zeros(6,1);
     q_des = [ -0.2;  0.7; -1.4;   -0.2;  0.7 ;-1.4  ;-0.2  ;-0.7 ;1.4  ;-0.2  ;-0.7 ;1.4];
     qd_des  = zeros(12,1);

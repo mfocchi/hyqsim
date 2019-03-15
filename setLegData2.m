@@ -1,3 +1,4 @@
+%same as setLegData, function overload that returns the output
 function output = setLegData2(leg, input, jointstate) 
 
 if strcmp(leg, 'LF') 

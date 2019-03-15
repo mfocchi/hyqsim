@@ -1,7 +1,6 @@
     clear all    
     clc
        
-
     loadFigOptions
     close all
     figure 
@@ -17,7 +16,6 @@
     %qdd = zeros(12,1); 
     %feet={};    feetVel={};
     %stance_legs = {'LF','RF','LH','RH'};
-
 
     if (USE_LOGGED_DATA)
         load(mat_file)
@@ -39,12 +37,11 @@
     end
             
     
-    plot_plane_through_point([0;0;1],[0;0;groundLevel],1);
+    plot_plane_through_point([0;0;1],[0;0;groundLevel],1, false);
     hold on
     for i=initIndex:endIndex
  
         %disp(strcat( 'time  : ',num2str(dt*i)))        
-        
         %this is just for debug the graphics with logged data
         if (USE_LOGGED_DATA) 
           loadData
@@ -87,8 +84,6 @@
         gravityB = [ zeros(3,1);b_R_w*[0;0;-9.81]];
         [qdd, baseAccB] = forwardDynamics(baseTwistB, gravityB, qd, tau, grForcesB, FREEZE_BASE);  
 
- 
-
         %integrate fwd everything ok with acc
         baseTwistB = baseTwistB + dt*baseAccB;
         qd = qd + dt*qdd;        
@@ -109,9 +104,5 @@
         logTau(:,i) = tau;
     end
     
-%     figure    
+%    other plots
      plot(time, logBasePoseW(6,:))
-%     figure    
-%     plot(time, logBaseAccB(6,:))
-%     figure    
-    % plot(time, logTau(1,:))
